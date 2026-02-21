@@ -1,5 +1,5 @@
 """
-Tax calculation utilities for Petpooja KDS payload building.
+Tax calculation utilities for Rista KDS payload building.
 
 These functions were extracted from CatalogService — they are pure math
 helpers with no dependency on catalog fetching or caching concerns.

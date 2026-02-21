@@ -7,7 +7,7 @@ class Menu(Base):
     __tablename__ = "menus"
 
     id = Column(Integer, primary_key=True, index=True)
-    provider = Column(String, default="petpooja", nullable=False)
+    provider = Column(String, default="rista", nullable=False)
     data = Column(JSONB, nullable=False)
 
     created_at = Column(
