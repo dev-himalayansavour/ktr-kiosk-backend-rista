@@ -1,0 +1,16 @@
+httpx
+fastapi[all]
+beanie
+motor
+jinja2
+sqlalchemy[asyncio]
+asyncpg
+psycopg2-binary
+requests
+python-multipart
+qrcode[pill]
+PyJWT
+cryptography
+redis>=5.0.1
+pydantic
+gunicorn

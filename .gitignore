@@ -1,0 +1,9 @@
+.env.local
+.env.production
+.venv
+.idea
+
+app.log
+__pycache__/
+
+sandbox
