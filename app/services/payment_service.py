@@ -146,7 +146,7 @@ class PaymentService:
             "Amount": str(amount_paise),
             "UserID": settings.PINELABS_EDC_USER_ID,
             "MerchantID": merchant_id,
-            "StoreID": settings.PINELABS_STORE_ID,
+            "StoreID": store_id,
             "SecurityToken": settings.PINELABS_EDC_SECURITY_TOKEN,
             "AutoCancelDurationInMinutes": 5
         }
