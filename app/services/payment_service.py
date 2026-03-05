@@ -13,7 +13,6 @@ from app.utils.phonepe import (
     compute_x_verify_for_endpoint, compute_qr_expiry,
 )
 from app.db.models.order import Order, PaymentStatus, KdsStatus, PaymentMethod
-from app.db.models.edc_config import EdcConfig
 from app.services.order_service import OrderService
 from app.services.catalog_service import CatalogService
 from app.utils.rista import RistaClient
@@ -132,21 +131,16 @@ class PaymentService:
         except ValueError:
             merchant_id = settings.PINELABS_EDC_MERCHANT_ID
 
-        # Lookup terminal_id (ClientID) from DB using store_id
-        edc_cfg_stmt = select(EdcConfig).where(EdcConfig.store_id == store_id)
-        edc_cfg = (await self.db.execute(edc_cfg_stmt)).scalar_one_or_none()
-        if not edc_cfg:
-            raise HTTPException(status_code=400, detail=f"EDC config not found for store_id: {store_id}")
-
+        # ClientID == store_id in this deployment
         request_payload = {
             "TransactionNumber": order_id,
             "SequenceNumber": 1,
             "AllowedPaymentMode": "1",
-            "ClientID": edc_cfg.terminal_id,
+            "ClientID": store_id,
             "Amount": str(amount_paise),
             "UserID": settings.PINELABS_EDC_USER_ID,
             "MerchantID": merchant_id,
-            "StoreID": store_id,
+            "StoreID": settings.PINELABS_STORE_ID,
             "SecurityToken": settings.PINELABS_EDC_SECURITY_TOKEN,
             "AutoCancelDurationInMinutes": 5
         }
@@ -244,16 +238,12 @@ class PaymentService:
         if order.provider_reference_id and order.provider_reference_id.isdigit():
             plutus_ref_id = int(order.provider_reference_id)
 
-        # Lookup terminal_id (ClientID) from DB using the store_id stored on the order
-        edc_cfg_stmt = select(EdcConfig).where(EdcConfig.store_id == order.store_id)
-        edc_cfg = (await self.db.execute(edc_cfg_stmt)).scalar_one_or_none()
-        client_id = edc_cfg.terminal_id if edc_cfg else settings.PINELABS_EDC_CLIENT_ID
-
+        # ClientID == store_id in this deployment
         payload = {
             "MerchantID": merchant_id,
             "SecurityToken": settings.PINELABS_EDC_SECURITY_TOKEN,
-            "StoreID": edc_cfg.store_id,
-            "ClientID": client_id,
+            "StoreID": setting.PINELABS_STORE_ID,
+            "ClientID": order.store_id,
             "PlutusTransactionReferenceID": plutus_ref_id
         }
 
